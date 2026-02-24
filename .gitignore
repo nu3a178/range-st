@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 .env
+
+/src/assets/csv/**
+!/src/assets/csv/**/
+!/src/assets/csv/**/.gitkeep
