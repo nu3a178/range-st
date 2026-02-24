@@ -123,10 +123,16 @@
   }
 }
 
-[data-slot="sidebar-inner"] {
+[data-slot="sidebar"] {
   background: linear-gradient(135deg, #fff, #dbeafe) !important;
 }
 
-.dark [data-slot="sidebar-inner"] {
+.dark [data-slot="sidebar"] {
   background: linear-gradient(135deg, #1e3a5f, #2e1065) !important;
+  color: #fff;
+}
+
+[data-slot="sidebar-header"] {
+  background: linear-gradient(135deg, #fff, #dbeafe) !important;
+  color: #111;
 }
