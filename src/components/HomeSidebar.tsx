@@ -11,7 +11,7 @@ export function HomeSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex justify-center items-center">
-          {"Range Station"} <GiOrange />
+          {"Range.St"} <GiOrange />
         </div>
       </SidebarHeader>
       <SidebarContent></SidebarContent>

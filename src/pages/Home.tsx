@@ -1,9 +1,13 @@
 import { HomeSidebar } from "@/components/HomeSidebar";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { MapViewer } from "@/layout/MapViewer";
 import { useEffect } from "react";
 
-export const Home = () => {
+const HomeContent = () => {
   const { isMobile, openMobile, setOpenMobile } = useSidebar();
   useEffect(() => {
     if (isMobile) {
@@ -20,7 +24,15 @@ export const Home = () => {
         <HomeSidebar />
         {!openMobile && <SidebarTrigger />}
       </div>
-      <MapViewer />
+      <MapViewer markerIconUrl="/icons/station.png" />
     </div>
+  );
+};
+
+export const Home = () => {
+  return (
+    <SidebarProvider>
+      <HomeContent />
+    </SidebarProvider>
   );
 };

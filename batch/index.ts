@@ -1,7 +1,15 @@
-import { importStationsCsv } from "./importRailwayCsv.js";
+import {
+  importTrainLinesCsv,
+  importStationsCsv,
+  initStationTable,
+  initTrainLineTable,
+} from "./importRailwayCsv.js";
 
 const run = async () => {
+  await initStationTable();
+  await initTrainLineTable();
   await importStationsCsv();
+  await importTrainLinesCsv();
 };
 
 run()
