@@ -27,6 +27,7 @@ import type { Line } from "@/types/Line";
 import type { Station } from "@/types/Station";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import type { MarkerType } from "@/types/Markers";
 
 export function HomeSidebar() {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
@@ -170,12 +171,7 @@ export function HomeSidebar() {
       ),
     });
     if (!data.estates) return;
-    setMarkers(
-      data.estates.map((estate: { latitude: number; longitude: number }) => ({
-        latitude: estate.latitude,
-        longitude: estate.longitude,
-      })),
-    );
+    setMarkers(data.estates.map((estate: MarkerType) => ({ ...estate })));
   };
   return (
     <Sidebar className="">

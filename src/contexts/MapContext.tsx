@@ -1,21 +1,8 @@
+import type { LineTrackType } from "@/types/LineTrack";
+import type { MapView } from "@/types/MapView";
+import type { MarkersType, MarkerType } from "@/types/Markers";
 import { type LatLngExpression } from "leaflet";
 import { createContext, useContext, useState } from "react";
-
-type MapView = {
-  latitude: number;
-  longitude: number;
-  zoom: number;
-};
-type MarkerType = {
-  latitude: number;
-  longitude: number;
-};
-type MarkersType = MarkerType[];
-
-type LineTrackType = {
-  color?: string;
-  track: Array<LatLngExpression> | null;
-};
 
 type MapContextType = {
   mapView: MapView;
