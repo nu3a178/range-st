@@ -41,8 +41,13 @@ export function HomeSidebar() {
   >("pedestrian");
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { setMapView, setMarkers, setLineTrack, setIsochronePolygons } =
-    useMapContext();
+  const {
+    setMapView,
+    setMarkers,
+    setLineTrack,
+    setIsochronePolygons,
+    setStationLocation,
+  } = useMapContext();
 
   useEffect(() => {
     const fetchPrefectures = async () => {
@@ -101,7 +106,6 @@ export function HomeSidebar() {
         zoom: selectedLine.zoom,
       });
     } else if (selectedPrefecture) {
-      console.log(selectedPrefecture);
       setMapView({
         latitude: selectedPrefecture.latitude,
         longitude: selectedPrefecture.longitude,
@@ -131,17 +135,15 @@ export function HomeSidebar() {
 
   useEffect(() => {
     if (!selectedStation) {
-      setMarkers([]);
+      setStationLocation(null);
       return;
     } else {
-      setMarkers([
-        {
-          latitude: selectedStation.latitude,
-          longitude: selectedStation.longitude,
-        },
-      ]);
+      setStationLocation({
+        latitude: selectedStation.latitude,
+        longitude: selectedStation.longitude,
+      });
     }
-  }, [selectedStation, setMarkers]);
+  }, [selectedStation, setStationLocation]);
   const onClickSearch = async () => {
     setIsLoading(true);
     const requestJson = {
@@ -156,9 +158,8 @@ export function HomeSidebar() {
       contours: [{ time, color: "87cefa" }],
     };
     const result = await searchReachableEstate(requestJson);
-
+    setIsLoading(false);
     const data = await result.data;
-    console.log(data);
     setIsochronePolygons({
       color: data.polygon.features[0].properties.fillColor ?? undefined,
       coordinates: data.polygon.features[0].geometry.coordinates.map(
@@ -168,13 +169,13 @@ export function HomeSidebar() {
         }),
       ),
     });
+    if (!data.estates) return;
     setMarkers(
       data.estates.map((estate: { latitude: number; longitude: number }) => ({
         latitude: estate.latitude,
         longitude: estate.longitude,
       })),
     );
-    setIsLoading(false);
   };
   return (
     <Sidebar className="">

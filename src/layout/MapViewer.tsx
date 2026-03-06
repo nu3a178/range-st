@@ -38,13 +38,13 @@ const MapContent = ({
   );
 };
 export const MapViewer = () => {
-  const { mapView, markers, lineTrack, isochronePolygons } = useMapContext();
+  const { mapView, markers, lineTrack, isochronePolygons, stationLocation } =
+    useMapContext();
   const { latitude, longitude, zoom } = mapView;
   const color = lineTrack.color?.length ? lineTrack.color : "3388ff";
   const polyline = lineTrack.track ?? [];
 
   const isochroneColor = isochronePolygons.color ?? "#fff";
-  console.log(isochronePolygons);
 
   return (
     <MapContainer
@@ -70,9 +70,12 @@ export const MapViewer = () => {
           <Polygon
             pathOptions={{ color: `${isochroneColor}`, weight: 6 }}
             color={`#${isochroneColor}`}
-            positions={isochronePolygons.coordinates.filter(
-              (coord) => coord !== null,
-            )}
+            positions={isochronePolygons.coordinates}
+          />
+        )}
+        {stationLocation && (
+          <Marker
+            position={[stationLocation.latitude, stationLocation.longitude]}
           />
         )}
       </MapContent>

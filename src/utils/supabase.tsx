@@ -35,7 +35,6 @@ export const getLinesInPrefecture = async (prefectureId: number) => {
       };
     }[]
   ).map((item) => item.train_lines);
-  console.log(trainLines);
   return trainLines;
 };
 
@@ -47,14 +46,13 @@ export const getStationsInLine = async (lineId: number) => {
   if (error) {
     throw error;
   }
-  console.log(data);
+
   const stations = data as unknown as {
     code: number;
     name: string;
     latitude: number;
     longitude: number;
   }[];
-  console.log(stations);
   return stations;
 };
 

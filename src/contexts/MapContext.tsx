@@ -6,10 +6,11 @@ type MapView = {
   longitude: number;
   zoom: number;
 };
-type MarkersType = {
+type MarkerType = {
   latitude: number;
   longitude: number;
-}[];
+};
+type MarkersType = MarkerType[];
 
 type LineTrackType = {
   color?: string;
@@ -25,6 +26,8 @@ type MapContextType = {
   setLineTrack: (lineTrack: LineTrackType) => void;
   isochronePolygons: IsochronePolygon;
   setIsochronePolygons: (isochronePolygons: IsochronePolygon) => void;
+  stationLocation: MarkerType | null;
+  setStationLocation: (stationLocation: MarkerType | null) => void;
 };
 
 type IsochronePolygon = {
@@ -51,6 +54,9 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
     color: undefined,
     coordinates: [],
   });
+  const [stationLocation, setStationLocation] = useState<MarkerType | null>(
+    null,
+  );
   return (
     <MapContext.Provider
       value={{
@@ -62,6 +68,8 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         setLineTrack,
         isochronePolygons,
         setIsochronePolygons,
+        stationLocation,
+        setStationLocation,
       }}
     >
       {children}

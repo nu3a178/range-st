@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "batch": "tsx batch/index.ts"
+    "batch": "tsx batch/index.ts",
+    "start":"npx supabase start",
+    "stop":"npx supabase stop"
   },
   "dependencies": {
     "@mapbox/polyline": "^1.2.1",
