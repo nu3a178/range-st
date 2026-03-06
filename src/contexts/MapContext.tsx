@@ -32,7 +32,7 @@ type MapContextType = {
 
 type IsochronePolygon = {
   color?: string;
-  coordinates: Array<LatLngExpression | null>;
+  coordinates: Array<LatLngExpression>;
 };
 
 const MapContext = createContext<MapContextType | null>(null);
