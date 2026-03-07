@@ -9,11 +9,11 @@ import {
   ZoomControl,
   useMap,
 } from "react-leaflet";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import L, { latLngBounds, type LatLngExpression } from "leaflet";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+
 import trainPng from "@/assets/train.png";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useDrawerContext } from "@/contexts/DrawerContext";
 
 const MapContent = ({
   latitude,
@@ -60,15 +60,17 @@ const MapContent = ({
   );
 };
 export const MapViewer = () => {
-  const { isMobile } = useSidebar();
-  const { mapView, estateList, lineTrack, isochronePolygons, stationLocation } =
-    useMapContext();
+  const {
+    mapView,
+    estateList,
+    lineTrack,
+    isochronePolygons,
+    stationLocation,
+    setSelectedEstate,
+  } = useMapContext();
+  const { setOpenDrawer } = useDrawerContext();
   const { latitude, longitude, zoom } = mapView;
-  const [open, setOpen] = useState(false);
-  const [estate, setEstate] = useState<{
-    address: string;
-    name: string;
-  } | null>(null);
+
   const color = lineTrack.color?.length ? lineTrack.color : "3388ff";
   const polyline = lineTrack.track ?? [];
 
@@ -83,16 +85,9 @@ export const MapViewer = () => {
   });
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <p>{estate?.name}</p>
-          <img src="https://picsum.photos/200/300" />
-          <p>{estate?.address}</p>
-        </DialogContent>
-      </Dialog>
       <div className="relative w-full h-full">
         <div
-          className={`${isMobile ? "top-1 right-1" : "bottom-1 left-1"} absolute z-[1000] text-xs text-gray-600 bg-white/70 px-1 rounded pointer-events-none`}
+          className={`top-1 right-1 absolute z-[1000] text-xs text-gray-600 bg-white/70 px-1 rounded pointer-events-none`}
         >
           ※現在関東地方にのみ対応しています。
         </div>
@@ -126,11 +121,8 @@ export const MapViewer = () => {
                   icon={rentIcon}
                   eventHandlers={{
                     click: () => {
-                      setEstate({
-                        address: estate.address ?? "",
-                        name: estate.name ?? "",
-                      });
-                      setOpen(true);
+                      setOpenDrawer(true);
+                      setSelectedEstate(estate);
                     },
                   }}
                 />

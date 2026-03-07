@@ -15,6 +15,8 @@ type MapContextType = {
   setIsochronePolygons: (isochronePolygons: IsochronePolygon) => void;
   stationLocation: Estate | null;
   setStationLocation: (stationLocation: Estate | null) => void;
+  selectedEstate: Estate | null;
+  setSelectedEstate: (estate: Estate | null) => void;
 };
 
 type IsochronePolygon = {
@@ -33,6 +35,7 @@ const DEFAULT_MAP_VIEW: MapView = {
 export const MapProvider = ({ children }: { children: React.ReactNode }) => {
   const [mapView, setMapView] = useState<MapView>(DEFAULT_MAP_VIEW);
   const [estateList, setEstateList] = useState<EstateList>([]);
+  const [selectedEstate, setSelectedEstate] = useState<Estate | null>(null);
   const [lineTrack, setLineTrack] = useState<LineTrackType>({
     color: undefined,
     track: [],
@@ -55,6 +58,8 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         setIsochronePolygons,
         stationLocation,
         setStationLocation,
+        selectedEstate,
+        setSelectedEstate,
       }}
     >
       {children}

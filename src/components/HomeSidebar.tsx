@@ -34,6 +34,7 @@ import { CiSearch } from "react-icons/ci";
 import { Card, CardContent } from "./ui/card";
 import { toast } from "sonner";
 import { CgSpinner } from "react-icons/cg";
+import { useDrawerContext } from "@/contexts/DrawerContext";
 
 export function HomeSidebar() {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
@@ -55,6 +56,7 @@ export function HomeSidebar() {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputTimeRef = useRef<HTMLInputElement>(null);
   const { setOpenMobile } = useSidebar();
+  const { setOpenDrawer } = useDrawerContext();
   const {
     setMapView,
     setEstateList,
@@ -218,6 +220,7 @@ export function HomeSidebar() {
       return;
     }
     setEstateList(data.estates.map((estate: Estate) => ({ ...estate })));
+    setOpenDrawer(true);
     toast(`${data.estates.length}件の物件が見つかりました`);
   };
   return (

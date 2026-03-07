@@ -8,7 +8,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <App />
-      <Toaster position="bottom-center" />
+      <Toaster position="top-center" />
     </BrowserRouter>
   </React.StrictMode>,
 );
