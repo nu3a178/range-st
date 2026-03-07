@@ -262,7 +262,7 @@ export function HomeSidebar() {
                       onClick={() => onClickSuggestion(station)}
                     >
                       <p className="text-xs text-gray-500">
-                        {station.train_lines.name}
+                        {station.train_lines?.name ?? ""}
                       </p>
                       <p className="text-sm">{station.name}</p>
                     </CardContent>
