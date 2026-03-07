@@ -228,7 +228,7 @@ export function HomeSidebar() {
       </SidebarHeader>
       <SidebarContent className="relative flex justify-center items-center">
         <div className="absolute top-20 service-description w-3/5 ">
-          最寄り駅に近い物件を探しましょう。
+          あなたの駅近物件を探しましょう。
         </div>
         <div className="relative w-full max-w-36 z-10">
           <Input
