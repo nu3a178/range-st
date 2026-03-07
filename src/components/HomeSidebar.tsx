@@ -17,10 +17,11 @@ import {
 import {
   getLinesInPrefecture,
   getPrefectures,
+  getStationsByQuery,
   getStationsInLine,
   searchReachableEstate,
-} from "@/utils/supabase";
-import { useEffect, useState } from "react";
+} from "@/utils/supabase-api";
+import { useEffect, useRef, useState } from "react";
 import { useMapContext } from "@/contexts/MapContext";
 import type { Prefecture } from "@/types/Prefecture";
 import type { Line } from "@/types/Line";
@@ -28,6 +29,8 @@ import type { Station } from "@/types/Station";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import type { MarkerType } from "@/types/Markers";
+import { CiSearch } from "react-icons/ci";
+import { Card, CardContent } from "./ui/card";
 
 export function HomeSidebar() {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
@@ -42,6 +45,11 @@ export function HomeSidebar() {
   >("pedestrian");
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [stationSuggestions, setStationSuggestions] = useState<Station[]>([]);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const {
     setMapView,
     setMarkers,
@@ -145,6 +153,41 @@ export function HomeSidebar() {
       });
     }
   }, [selectedStation, setStationLocation]);
+
+  const getStationSuggestions = async (value: string) => {
+    if (!value) {
+      setStationSuggestions([]);
+      return;
+    }
+    const result = await getStationsByQuery(value);
+    setStationSuggestions(result);
+  };
+
+  // 選択した駅候補について、属している県と路線情報も含めてセットする
+  const onClickSuggestion = async (station: Station) => {
+    // 選択した駅の属する県をセット
+    const prefecture = prefectures.find(
+      (p) => p.code === station.prefecture_code,
+    );
+    const lineCode = station.line_code;
+    if (!prefecture || !lineCode) return;
+
+    setSelectedPrefecture(prefecture);
+    // 並行fetchして await 境界を減らす（途中のstate更新でズームが路線に向かないようにする）
+    const [lines, stationsInLine] = await Promise.all([
+      getLinesInPrefecture(station.prefecture_code!),
+      getStationsInLine(station.line_code!),
+    ]);
+
+    // 全stateを一度にセット → useEffectは selectedStation が存在する状態で発火する
+    setLines(lines);
+    setStations(stationsInLine);
+    setSelectedLine(lines.find((l) => l.code === station.line_code) ?? null);
+    setSelectedStation(station);
+
+    inputRef.current?.blur();
+  };
+
   const onClickSearch = async () => {
     setIsLoading(true);
     const requestJson = {
@@ -174,14 +217,52 @@ export function HomeSidebar() {
     setMarkers(data.estates.map((estate: MarkerType) => ({ ...estate })));
   };
   return (
-    <Sidebar className="">
+    <Sidebar>
       <SidebarHeader>
         <div className="flex justify-center items-center">
           {"Range.St"} <GiOrange />
         </div>
       </SidebarHeader>
       <SidebarContent className="flex justify-center items-center">
-        <Select onValueChange={(value) => onChangePrefecture(Number(value))}>
+        <div className="relative w-full max-w-36 z-10">
+          <Input
+            ref={inputRef}
+            placeholder="駅名で検索"
+            className="rounded-2xl"
+            onChange={(e) => getStationSuggestions(e.target.value)}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
+          />
+          <CiSearch className="absolute right-2 top-2 h-6 w-6" />
+          {isInputFocused && stationSuggestions.length > 0 && (
+            <>
+              <Card
+                className="absolute w-full max-h-48 overflow-y-auto z-1"
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                {stationSuggestions.map((station) => (
+                  <>
+                    <CardContent
+                      key={station.code}
+                      className="hover:bg-gray-100"
+                      onClick={() => onClickSuggestion(station)}
+                    >
+                      <p className="text-xs text-gray-500">
+                        {station.train_lines.name}
+                      </p>
+                      <p className="text-sm">{station.name}</p>
+                    </CardContent>
+                  </>
+                ))}
+              </Card>
+            </>
+          )}
+        </div>
+        <div className="h-20"></div>
+        <Select
+          value={selectedPrefecture?.code.toString() || ""}
+          onValueChange={(value) => onChangePrefecture(Number(value))}
+        >
           <SelectTrigger className="w-full max-w-48">
             <SelectValue placeholder="都道府県" />
           </SelectTrigger>
