@@ -52,6 +52,7 @@ export function HomeSidebar() {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputTimeRef = useRef<HTMLInputElement>(null);
   const { setOpenMobile } = useSidebar();
   const {
     setMapView,
@@ -188,7 +189,7 @@ export function HomeSidebar() {
     setSelectedLine(lines.find((l) => l.code === station.line_code) ?? null);
     setSelectedStation(station);
     setInputValue("");
-    inputRef.current?.blur();
+    inputTimeRef.current?.focus();
   };
 
   const onClickSearch = async () => {
@@ -255,18 +256,16 @@ export function HomeSidebar() {
                 onMouseDown={(e) => e.preventDefault()}
               >
                 {stationSuggestions.map((station) => (
-                  <>
-                    <CardContent
-                      key={station.code}
-                      className="hover:bg-gray-100"
-                      onClick={() => onClickSuggestion(station)}
-                    >
-                      <p className="text-xs text-gray-500">
-                        {station.train_lines?.name ?? ""}
-                      </p>
-                      <p className="text-sm">{station.name}</p>
-                    </CardContent>
-                  </>
+                  <CardContent
+                    key={station.code}
+                    className="hover:bg-gray-100"
+                    onClick={() => onClickSuggestion(station)}
+                  >
+                    <p className="text-xs text-gray-500">
+                      {station.train_lines?.name ?? ""}
+                    </p>
+                    <p className="text-sm">{station.name}</p>
+                  </CardContent>
                 ))}
               </Card>
             </>
@@ -351,6 +350,8 @@ export function HomeSidebar() {
           </Select>
           <p>で</p>
           <Input
+            ref={inputTimeRef}
+            id="time-input"
             className="w-16"
             type="number"
             value={time}
