@@ -33,6 +33,7 @@ import type { MarkerType } from "@/types/Markers";
 import { CiSearch } from "react-icons/ci";
 import { Card, CardContent } from "./ui/card";
 import { toast } from "sonner";
+import { CgSpinner } from "react-icons/cg";
 
 export function HomeSidebar() {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
@@ -364,7 +365,7 @@ export function HomeSidebar() {
           onClick={onClickSearch}
           disabled={!selectedStation || !time || isLoading}
         >
-          検索開始
+          {isLoading ? <CgSpinner className="animate-spin" /> : "検索開始"}
         </Button>
       </SidebarContent>
 
