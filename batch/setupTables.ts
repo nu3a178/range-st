@@ -11,6 +11,7 @@ const client = createClient(supabaseUrl, supabaseAnonKey);
 
 const STATIONS_DIR = path.resolve("batch/csv/stations");
 const LINES_DIR = path.resolve("batch/csv/lines");
+const PREFECTURES_DIR = path.resolve("batch/csv/prefectures");
 
 function parseCsv<T extends Record<string, string>>(filePath: string): T[] {
   const content = fs.readFileSync(filePath, "utf-8");
@@ -53,6 +54,18 @@ export const initTrainLineTable = async () => {
   }
 };
 
+export const initPrefectureTable = async () => {
+  const { data, error } = await client
+    .from("prefectures")
+    .delete()
+    .gte("id", 0);
+  if (error) {
+    console.error("Error deleting prefectures:", error);
+  } else {
+    console.log("Prefectures deleted successfully:", data);
+  }
+};
+
 export const initPrefectureLinesTable = async () => {
   const { data, error } = await client
     .from("prefecture_train_lines")
@@ -65,17 +78,47 @@ export const initPrefectureLinesTable = async () => {
   }
 };
 
-export const importStationsCsv = async () => {
-  const stations = readCsvDir(STATIONS_DIR);
-  const stationsParams = stations.map((station, i) => ({
+export const importPrefecturesCsv = async () => {
+  const prefectures = readCsvDir(PREFECTURES_DIR);
+  const prefectureParams = prefectures.map((p, i) => ({
     id: i + 1,
-    code: station.station_cd,
-    prefecture_code: station.pref_cd,
-    line_code: station.line_cd,
-    name: station.station_name,
-    latitude: parseFloat(station.lat),
-    longitude: parseFloat(station.lon),
+    code: p.code,
+    name: p.name,
+    latitude: parseFloat(p.latitude),
+    longitude: parseFloat(p.longitude),
+    zoom: parseInt(p.zoom, 10),
   }));
+  const { data, error } = await client
+    .from("prefectures")
+    .insert(prefectureParams);
+  if (error) {
+    console.error("Error inserting prefectures:", error);
+  } else {
+    console.log("Prefectures inserted successfully:", data);
+  }
+};
+
+export const importStationsCsv = async () => {
+  const prefectures = (
+    await client.from("prefectures").select("code")
+  ).data?.map((prefecture) => prefecture.code.toString());
+  const stations = readCsvDir(STATIONS_DIR);
+  // csv内の駅のうち、prefecturesテーブルにある都道府県に属する駅だけを保存する
+  const stationsParams = stations
+    .filter((station) => {
+      return prefectures ? prefectures.includes(station.pref_cd) : true;
+    })
+    .map((station, i) => {
+      return {
+        id: i + 1,
+        code: station.station_cd,
+        prefecture_code: station.pref_cd,
+        line_code: station.line_cd,
+        name: station.station_name,
+        latitude: parseFloat(station.lat),
+        longitude: parseFloat(station.lon),
+      };
+    });
 
   const { data, error } = await client.from("stations").insert(stationsParams);
   if (error) {
@@ -105,14 +148,22 @@ export const importTrainLinesCsv = async () => {
 };
 
 export const importPrefectureTrainLines = async () => {
+  const prefectures = (
+    await client.from("prefectures").select("code")
+  ).data?.map((prefecture) => prefecture.code.toString());
   const stations = readCsvDir(STATIONS_DIR);
-  const prefectureAndLinesColumns = stations.map((station, i) => {
-    return {
-      id: i + 1,
-      prefecture_code: station.pref_cd,
-      train_line_code: station.line_cd,
-    };
-  });
+  // prefecturesテーブルに無い都道府県の駅は無視する
+  const prefectureAndLinesColumns = stations
+    .filter((station) =>
+      prefectures ? prefectures.includes(station.pref_cd) : true,
+    )
+    .map((station, i) => {
+      return {
+        id: i + 1,
+        prefecture_code: station.pref_cd,
+        train_line_code: station.line_cd,
+      };
+    });
   const uniqueRelations = Array.from(
     new Map(
       prefectureAndLinesColumns.map((r) => [

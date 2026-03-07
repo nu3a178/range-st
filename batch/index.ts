@@ -5,12 +5,16 @@ import {
   initTrainLineTable,
   initPrefectureLinesTable,
   importPrefectureTrainLines,
+  importPrefecturesCsv,
+  initPrefectureTable,
 } from "./setupTables.js";
 
 const run = async () => {
   await initPrefectureLinesTable();
   await initStationTable();
   await initTrainLineTable();
+  await initPrefectureTable();
+  await importPrefecturesCsv();
   await importTrainLinesCsv();
   await importStationsCsv();
   await importPrefectureTrainLines();
