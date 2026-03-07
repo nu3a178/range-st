@@ -220,6 +220,7 @@ export function HomeSidebar() {
     });
     if (!data.estates) {
       toast("該当する物件が見つかりませんでした", {});
+      return;
     }
     setMarkers(data.estates.map((estate: MarkerType) => ({ ...estate })));
   };
