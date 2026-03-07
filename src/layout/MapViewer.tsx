@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import L, { latLngBounds, type LatLngExpression } from "leaflet";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import trainPng from "@/assets/train.png";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const MapContent = ({
   latitude,
@@ -59,6 +60,7 @@ const MapContent = ({
   );
 };
 export const MapViewer = () => {
+  const { isMobile } = useSidebar();
   const { mapView, markers, lineTrack, isochronePolygons, stationLocation } =
     useMapContext();
   const { latitude, longitude, zoom } = mapView;
@@ -88,61 +90,68 @@ export const MapViewer = () => {
           <p>{estate?.address}</p>
         </DialogContent>
       </Dialog>
-      <MapContainer
-        center={[latitude, longitude]}
-        zoom={zoom}
-        zoomControl={false}
-        className="w-full h-full z-0"
-      >
-        <MapContent
-          latitude={latitude}
-          longitude={longitude}
-          zoom={zoom}
-          coordinates={isochronePolygons?.coordinates ?? []}
+      <div className="relative w-full h-full">
+        <div
+          className={`${isMobile ? "top-1 right-1" : "bottom-1 left-1"} absolute z-[1000] text-xs text-gray-600 bg-white/70 px-1 rounded pointer-events-none`}
         >
-          {markers.map((marker, index) => (
-            <Marker
-              key={index}
-              position={[marker.latitude, marker.longitude]}
-              eventHandlers={{
-                click: () => {
-                  setEstate({
-                    address: marker.address ?? "",
-                    name: marker.name ?? "",
-                  });
-                  setOpen(true);
-                },
-              }}
-            />
-          ))}
-
-          <Polyline
-            pathOptions={{ color: "#ffffff", weight: 8 }}
-            positions={polyline}
-          />
-          <Polyline
-            pathOptions={{ color: `#${color}`, weight: 4 }}
-            positions={polyline}
-          />
-
-          {isochronePolygons && (
-            <>
-              <Polygon
-                pathOptions={{ color: `${isochroneColor}`, weight: 6 }}
-                color={`#${isochroneColor}`}
-                positions={isochronePolygons.coordinates}
+          ※現在関東地方にのみ対応しています。
+        </div>
+        <MapContainer
+          center={[latitude, longitude]}
+          zoom={zoom}
+          zoomControl={false}
+          className="w-full h-full z-0"
+        >
+          <MapContent
+            latitude={latitude}
+            longitude={longitude}
+            zoom={zoom}
+            coordinates={isochronePolygons?.coordinates ?? []}
+          >
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                position={[marker.latitude, marker.longitude]}
+                eventHandlers={{
+                  click: () => {
+                    setEstate({
+                      address: marker.address ?? "",
+                      name: marker.name ?? "",
+                    });
+                    setOpen(true);
+                  },
+                }}
               />
-            </>
-          )}
+            ))}
 
-          {stationLocation && (
-            <Marker
-              position={[stationLocation.latitude, stationLocation.longitude]}
-              icon={stationIcon}
+            <Polyline
+              pathOptions={{ color: "#ffffff", weight: 8 }}
+              positions={polyline}
             />
-          )}
-        </MapContent>
-      </MapContainer>
+            <Polyline
+              pathOptions={{ color: `#${color}`, weight: 4 }}
+              positions={polyline}
+            />
+
+            {isochronePolygons && (
+              <>
+                <Polygon
+                  pathOptions={{ color: `${isochroneColor}`, weight: 6 }}
+                  color={`#${isochroneColor}`}
+                  positions={isochronePolygons.coordinates}
+                />
+              </>
+            )}
+
+            {stationLocation && (
+              <Marker
+                position={[stationLocation.latitude, stationLocation.longitude]}
+                icon={stationIcon}
+              />
+            )}
+          </MapContent>
+        </MapContainer>
+      </div>
     </>
   );
 };

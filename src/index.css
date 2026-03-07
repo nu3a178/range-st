@@ -149,3 +149,10 @@
   font-size: x-large;
   font-weight: bold;
 }
+
+.service-description {
+  color: #555;
+  font-family: "Kiwi Maru", serif;
+  font-size: medium;
+  font-weight: bold;
+}
