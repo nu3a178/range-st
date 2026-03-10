@@ -57,10 +57,13 @@ export const getStationsInLine = async (lineId: number) => {
 };
 
 export const searchReachableEstate = async (requestJson: any) => {
-  const result = await client.functions.invoke("search-estate", {
+  const { data, error } = await client.functions.invoke("search-estate", {
     body: requestJson,
   });
-  return result;
+  if (error) {
+    throw error;
+  }
+  return data;
 };
 
 export const getStationsByQuery = async (query: string) => {

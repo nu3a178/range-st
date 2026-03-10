@@ -203,9 +203,9 @@ export function HomeSidebar() {
           : undefined,
       contours: [{ time, color: "87cefa" }],
     };
-    const result = await searchReachableEstate(requestJson);
     setIsLoading(false);
-    const data = await result.data;
+    const data = await searchReachableEstate(requestJson);
+
     setIsochronePolygons({
       color: data.polygon.features[0].properties.fillColor ?? undefined,
       coordinates: data.polygon.features[0].geometry.coordinates.map(
@@ -279,7 +279,10 @@ export function HomeSidebar() {
           value={selectedPrefecture?.code.toString() || ""}
           onValueChange={(value) => onChangePrefecture(Number(value))}
         >
-          <SelectTrigger className="w-full max-w-48">
+          <SelectTrigger
+            className="w-full max-w-48"
+            data-testid="prefecture-select"
+          >
             <SelectValue placeholder="都道府県" />
           </SelectTrigger>
           <SelectContent>
@@ -298,7 +301,7 @@ export function HomeSidebar() {
           value={selectedLine?.code.toString() || ""}
           disabled={!selectedPrefecture}
         >
-          <SelectTrigger className="w-full max-w-48">
+          <SelectTrigger className="w-full max-w-48" data-testid="line-select">
             <SelectValue placeholder="路線" />
           </SelectTrigger>
           <SelectContent>
@@ -317,7 +320,10 @@ export function HomeSidebar() {
           value={selectedStation?.code.toString() || ""}
           disabled={!selectedLine}
         >
-          <SelectTrigger className="w-full max-w-48">
+          <SelectTrigger
+            className="w-full max-w-48"
+            data-testid="station-select"
+          >
             <SelectValue placeholder="駅" />
           </SelectTrigger>
           <SelectContent>
@@ -339,7 +345,7 @@ export function HomeSidebar() {
               setTransportationMode(value as "pedestrian" | "bicycle" | "auto")
             }
           >
-            <SelectTrigger className="w-24 max-w-48">
+            <SelectTrigger className="w-24 max-w-48" data-testid="mode-trigger">
               <SelectValue placeholder="手段" />
             </SelectTrigger>
             <SelectContent>
@@ -354,6 +360,7 @@ export function HomeSidebar() {
           <p>で</p>
           <Input
             ref={inputTimeRef}
+            data-testid="time-input"
             id="time-input"
             className="w-16"
             type="number"
@@ -365,6 +372,7 @@ export function HomeSidebar() {
         <Button
           onClick={onClickSearch}
           disabled={!selectedStation || !time || isLoading}
+          data-testid="register-button"
         >
           {isLoading ? <CgSpinner className="animate-spin" /> : "検索開始"}
         </Button>

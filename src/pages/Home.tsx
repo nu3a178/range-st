@@ -46,11 +46,15 @@ const HomeContent = () => {
         )}
 
         <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
-          <DrawerContent className="flex flex-col justify-end">
+          <DrawerContent
+            className="flex flex-col justify-end"
+            data-testid="drawer"
+          >
             <div className="flex flex-row gap-2 overflow-x-auto p-4">
-              {estateList.map((estate) => (
+              {estateList.map((estate, i) => (
                 <Card
                   className="w-40 shrink-0 hover:shadow-lg hover:scale-105 transition-transform"
+                  data-testid={`estate-${i}`}
                   onClick={() => {
                     setSelectedEstate(estate);
                     setMapView({
