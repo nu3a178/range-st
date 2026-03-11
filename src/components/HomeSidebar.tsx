@@ -220,6 +220,7 @@ export function HomeSidebar() {
     setOpenDrawer(true);
     toast(`${data.estates.length}件の物件が見つかりました`);
   };
+  const inputDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   return (
     <Sidebar>
       <SidebarHeader>
@@ -237,8 +238,11 @@ export function HomeSidebar() {
             placeholder="駅名で検索"
             className="rounded-2xl"
             onChange={(e) => {
-              getStationSuggestions(e.target.value);
               setInputValue(e.target.value);
+              if (inputDebounce.current) clearTimeout(inputDebounce.current);
+              inputDebounce.current = setTimeout(() => {
+                getStationSuggestions(e.target.value);
+              }, 300);
             }}
             onFocus={() => setIsInputFocused(true)}
             onBlur={(e) => {
