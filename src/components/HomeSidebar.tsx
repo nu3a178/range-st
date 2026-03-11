@@ -228,8 +228,8 @@ export function HomeSidebar() {
           {"Range.St"} <GiOrange />
         </div>
       </SidebarHeader>
-      <SidebarContent className="relative flex justify-center items-center">
-        <div className="absolute top-20 service-description w-3/5 ">
+      <SidebarContent className="relative flex items-center">
+        <div className="py-15 top-20 service-description w-3/5 ">
           あなたの駅近物件を探しましょう。
         </div>
         <div className="relative w-full max-w-36 z-10">
