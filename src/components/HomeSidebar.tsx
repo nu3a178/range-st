@@ -62,6 +62,8 @@ export function HomeSidebar() {
     setStationLocation,
     transportationMode,
     setTransportationMode,
+    setRoute,
+    setSelectedEstate,
   } = useMapContext();
 
   useEffect(() => {
@@ -108,6 +110,10 @@ export function HomeSidebar() {
   };
 
   useEffect(() => {
+    setRoute(null);
+    setEstateList([]);
+    setSelectedEstate(null);
+    setIsochronePolygons({ color: undefined, coordinates: [] });
     if (selectedStation) {
       setMapView({
         latitude: selectedStation.latitude,
@@ -127,7 +133,16 @@ export function HomeSidebar() {
         zoom: selectedPrefecture.zoom,
       });
     }
-  }, [selectedPrefecture, selectedLine, selectedStation, setMapView]);
+  }, [
+    selectedPrefecture,
+    selectedLine,
+    selectedStation,
+    setMapView,
+    setEstateList,
+    setRoute,
+    setSelectedEstate,
+    setIsochronePolygons,
+  ]);
 
   useEffect(() => {
     if (!selectedLine) {
@@ -189,6 +204,10 @@ export function HomeSidebar() {
   };
 
   const onClickSearch = async () => {
+    setRoute(null);
+    setEstateList([]);
+    setSelectedEstate(null);
+    setIsochronePolygons({ color: undefined, coordinates: [] });
     if (!selectedStation) return;
     setOpenMobile(false);
     setIsLoading(true);
