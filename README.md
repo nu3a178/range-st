@@ -44,5 +44,10 @@ npm run batch
 docker compose up
 ```
 
+7. 以下を実行してアプリケーションを起動する。
+```
+npm run dev
+```
+
 実行環境として、最低でも8GBのメモリがないと動作は厳しいと思います。
 
