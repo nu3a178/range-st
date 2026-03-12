@@ -5,7 +5,6 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { GiOrange } from "react-icons/gi";
 import {
   Select,
   SelectContent,
@@ -243,9 +242,7 @@ export function HomeSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex justify-center items-center">
-          {"Range.St"} <GiOrange />
-        </div>
+        <div className="flex justify-center items-center">{"キチタン"}</div>
       </SidebarHeader>
       <SidebarContent className="relative flex items-center">
         <div className="py-15 top-20 service-description w-3/5 ">
